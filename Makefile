@@ -1,5 +1,5 @@
 CC = icc
-CFLAGS = -O2
+CFLAGS = -O3 -xHost
 
 all: stream_c.exe stream.icc
 
@@ -11,4 +11,4 @@ clean:
 
 # an example of a more complex build line for the Intel icc compiler
 stream.icc: stream.c
-	icc -O3 -xCORE-AVX2 -ffreestanding -qopenmp -DSTREAM_ARRAY_SIZE=80000000 -DNTIMES=20 stream.c -o stream.omp.AVX2.80M.20x.icc
+	icc -O3 -xHost -ffreestanding -qopenmp -DSTREAM_ARRAY_SIZE=80000000 -DNTIMES=20 stream.c -o stream.omp.AVX2.80M.20x.icc
