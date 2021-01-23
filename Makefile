@@ -1,14 +1,15 @@
 CC = icc
-CFLAGS = -O3 -xHost
+# CFLAGS = -O3 -xHost
+CFLAGS = -O2
 
-all: stream_c.exe stream.icc
+all: stream_single stream_multi
 
-stream_c.exe: stream.c
-	$(CC) $(CFLAGS) stream.c -o stream_c.exe
-
-clean:
-	rm -f stream_c.exe *.o
+stream_single: stream.c
+	$(CC) $(CFLAGS) stream.c -o stream_single
 
 # an example of a more complex build line for the Intel icc compiler
-stream.icc: stream.c
-	icc -O3 -xHost -ffreestanding -qopenmp -DSTREAM_ARRAY_SIZE=80000000 -DNTIMES=20 stream.c -o stream.omp.AVX2.80M.20x.icc
+stream_multi: stream.c
+	$(CC) $(CFLAGS) -qopenmp -DSTREAM_ARRAY_SIZE=100000000 -DNTIMES=20 stream.c -o stream_multi
+
+clean:
+	rm -f stream_c.exe stream_single stream_multi stream.omp.AVX2.80M.20x.icc *.o
