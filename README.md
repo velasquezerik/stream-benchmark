@@ -8,6 +8,32 @@ for measuring sustained memory bandwidth.
 Documentation for STREAM is on the web at:
    http://www.cs.virginia.edu/stream/ref.html
 
+
+# How to specify the compiler
+We can specify the compilers like this:
+```
+$ mkdir build
+$ cd build
+$ env CC=icc CXX=icpc cmake ..
+$ make
+```
+Or by exporting the corresponding environment variables:
+```
+$ mkdir build
+$ cd build
+$ export CC=icc
+$ export CXX=icpc
+$ cmake ..
+$ make
+```
+Or by setting CMake variables:
+```
+$ mkdir build
+$ cd build
+$ cmake -D CMAKE_C_COMPILER=icc -D CMAKE_CXX_COMPILER=icpc ..
+$ make
+```
+
 ===============================================
 NEWS
 ===============================================
