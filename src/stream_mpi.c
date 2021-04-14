@@ -198,6 +198,10 @@
 
 # define HLINE "-------------------------------------------------------------\n"
 
+
+#define LOG_NAME "STREAM_BENCHMARK_MPI_log.log"
+
+
 # ifndef MIN
 # define MIN(x,y) ((x)<(y)?(x):(y))
 # endif
@@ -556,6 +560,23 @@ main()
 			   maxtime[j]);
 		}
 		printf(HLINE);
+
+        /* Print LOG with results */
+        FILE * fp;
+        fp = fopen(LOG_NAME, "w");
+        if (fp != NULL)
+        {
+            fprintf(fp, "Function,BestRate,Avgtime,Mintime,Maxtime\n");
+            for (j=0; j<4; j++) {
+                avgtime[j] = avgtime[j]/(double)(NTIMES-1);
+
+                fprintf(fp, "%s,%.1f,%.6f,%.6f,%.6f\n", label[j], 
+                    1.0E-06 * bytes[j]/mintime[j], avgtime[j], mintime[j], 
+                    maxtime[j]);
+            }
+
+            fclose(fp);
+        }
 	}
 
     /* --- Every Rank Checks its Results --- */

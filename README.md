@@ -8,6 +8,12 @@ for measuring sustained memory bandwidth.
 Documentation for STREAM is on the web at:
    http://www.cs.virginia.edu/stream/ref.html
 
+# Easy RUN
+Only execute:
+```
+$ cd scripts
+$ ./runStream.sh 
+```
 
 # How to specify the compiler
 We can specify the compilers like this:

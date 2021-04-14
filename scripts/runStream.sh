@@ -13,6 +13,7 @@
         # Intel Compilers
         CXX_COMPILER=icpc
         C_COMPILER=icc
+		MPI_COMPILER=mpicc
 
         # GNU Compilers
         #CXX_COMPILER=g++
@@ -66,6 +67,13 @@
 	echo "---------------------------------------------------------------------"
 	${BIN_DIR}/stream_multi &> LogMultiFile.log
 
+	# MPI
+    echo ""
+	echo "---------------------------------------------------------------------"
+	echo "Executing Stream benchmark Application, MPI..."
+	echo "---------------------------------------------------------------------"
+	${BIN_DIR}/stream_mpi &> LogMPIFile.log
+
 #####################################################################
 
 #####################################################################
@@ -83,6 +91,7 @@
 	    LOGFILE_NAME_SINGLE=STREAM_SINGLE_LOG_${HOSTNAME}_${timestamp}.log
 	    mv ${WORK_DIR}/LogSingleFile.log ${LOG_DIR}/${LOGFILE_NAME_SINGLE}
 
+
 	# Edit and move
 		echo ""
 	    echo "---------------------------------------------------------------------"
@@ -90,6 +99,20 @@
 	    echo "---------------------------------------------------------------------"
 	    LOGFILE_NAME_MULTI=STREAM_MULTI_LOG_${HOSTNAME}_${timestamp}.log
 	    mv ${WORK_DIR}/LogMultiFile.log ${LOG_DIR}/${LOGFILE_NAME_MULTI}
+		# Move log data
+		LOGFILE_NAME_MULTI_DATA=STREAM_MULTI_DATA_LOG_${HOSTNAME}_${timestamp}.log
+	    mv ${WORK_DIR}/STREAM_BENCHMARK_log.log ${LOG_DIR}/${LOGFILE_NAME_MULTI_DATA}
+	
+	# Edit and move
+		echo ""
+	    echo "---------------------------------------------------------------------"
+	    echo "Renaming MPI After execution log file..."
+	    echo "---------------------------------------------------------------------"
+	    LOGFILE_NAME_MPI=STREAM_MPI_LOG_${HOSTNAME}_${timestamp}.log
+	    mv ${WORK_DIR}/LogMPIFile.log ${LOG_DIR}/${LOGFILE_NAME_MPI}
+		# Move log data
+		LOGFILE_NAME_MPI_DATA=STREAM_MPI_DATA_LOG_${HOSTNAME}_${timestamp}.log
+	    mv ${WORK_DIR}/STREAM_BENCHMARK_MPI_log.log ${LOG_DIR}/${LOGFILE_NAME_MPI_DATA}
 
 #####################################################################
 
@@ -105,6 +128,11 @@
     echo "After execution Logs file content (Multi CORE): "
     echo "---------------------------------------------------------------------"
     cat ${LOG_DIR}/${LOGFILE_NAME_MULTI}
+	echo ""
+    echo "---------------------------------------------------------------------"
+    echo "After execution Logs file content (MPI): "
+    echo "---------------------------------------------------------------------"
+    cat ${LOG_DIR}/${LOGFILE_NAME_MPI}
     echo "---------------------------------------------------------------------"
     echo "End of Stream Benchmarck"
     echo "---------------------------------------------------------------------"

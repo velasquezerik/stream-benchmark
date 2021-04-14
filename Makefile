@@ -14,6 +14,7 @@ stream_multi: src/stream.c
 
 # mpi 
 stream_mpi: src/stream_mpi.c
-	$(MPICC) $(CFLAGS) -ffreestanding -openmp  -DSTREAM_ARRAY_SIZE=80000000 -DNTIMES=20 -DVERBOSE  src/stream_mpi.c -o bin/stream_mpi
+	$(MPICC) $(CFLAGS) -ffreestanding -openmp  -DSTREAM_ARRAY_SIZE=100000000 -DNTIMES=20 -DVERBOSE  src/stream_mpi.c -o bin/stream_mpi
+
 clean:
 	rm -f bin/stream_single bin/stream_multi bin/stream_mpi
