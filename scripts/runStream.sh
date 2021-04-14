@@ -27,6 +27,9 @@
 		#INC_DIR=${WORK_DIR}/include
 		BIN_DIR=${WORK_DIR}/bin
 		LOG_DIR=${WORK_DIR}/logs
+
+		# For MPI execution
+		NP=4
     
     # Stream definition variables
         STREAM_ARRAY_SIZE=100000000
@@ -72,7 +75,7 @@
 	echo "---------------------------------------------------------------------"
 	echo "Executing Stream benchmark Application, MPI..."
 	echo "---------------------------------------------------------------------"
-	${BIN_DIR}/stream_mpi &> LogMPIFile.log
+	mpirun -np ${NP} ${BIN_DIR}/stream_mpi &> LogMPIFile.log
 
 #####################################################################
 
@@ -90,6 +93,9 @@
 	    echo "---------------------------------------------------------------------"
 	    LOGFILE_NAME_SINGLE=STREAM_SINGLE_LOG_${HOSTNAME}_${timestamp}.log
 	    mv ${WORK_DIR}/LogSingleFile.log ${LOG_DIR}/${LOGFILE_NAME_SINGLE}
+		# Move Log Data
+		LOGFILE_NAME_SINGLE_DATA=STREAM_SINGLE_DATA_LOG_${HOSTNAME}_${timestamp}.log
+	    mv ${WORK_DIR}/STREAM_BENCHMARK_SINGLE_log.log ${LOG_DIR}/${LOGFILE_NAME_SINGLE_DATA}
 
 
 	# Edit and move
@@ -101,7 +107,7 @@
 	    mv ${WORK_DIR}/LogMultiFile.log ${LOG_DIR}/${LOGFILE_NAME_MULTI}
 		# Move log data
 		LOGFILE_NAME_MULTI_DATA=STREAM_MULTI_DATA_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/STREAM_BENCHMARK_log.log ${LOG_DIR}/${LOGFILE_NAME_MULTI_DATA}
+	    mv ${WORK_DIR}/STREAM_BENCHMARK_MULTI_log.log ${LOG_DIR}/${LOGFILE_NAME_MULTI_DATA}
 	
 	# Edit and move
 		echo ""

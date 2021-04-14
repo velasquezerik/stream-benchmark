@@ -165,7 +165,11 @@
 
 # define HLINE "-------------------------------------------------------------\n"
 
-#define LOG_NAME "STREAM_BENCHMARK_log.log"
+#ifndef _OPENMP
+	#define LOG_NAME "STREAM_BENCHMARK_SINGLE_log.log"
+#else
+	#define LOG_NAME "STREAM_BENCHMARK_MULTI_log.log"
+#endif
 
 # ifndef MIN
 # define MIN(x,y) ((x)<(y)?(x):(y))
