@@ -43,3 +43,11 @@ if (OPENMP_FOUND)
     target_link_libraries(stream_multi PRIVATE "${OpenMP_C_FLAGS}")
     target_compile_options(stream_multi PRIVATE "${OpenMP_C_FLAGS}")
 endif()
+
+# MPI Package
+find_package(MPI)
+if (MPI_FOUND)
+    # create mpi
+    add_executable(stream_mpi src/stream_mpi.c)
+    target_link_libraries(stream_mpi PRIVATE MPI_C)
+endif()
