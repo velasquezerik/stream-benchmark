@@ -562,6 +562,7 @@ main()
 		printf(HLINE);
 
         /* Print LOG with results */
+		double min_ = 0;
         FILE * fp;
         fp = fopen(LOG_NAME, "w");
         if (fp != NULL)
@@ -569,9 +570,13 @@ main()
             fprintf(fp, "Function,BestRate,Avgtime,Mintime,Maxtime\n");
             for (j=0; j<4; j++) {
                 avgtime[j] = avgtime[j]/(double)(NTIMES-1);
+				avgtime[j] = avgtime[j]/(double)(STREAM_ARRAY_SIZE);
+				min_ = mintime[j];
+				mintime[j] = mintime[j]/(double)(STREAM_ARRAY_SIZE);
+				maxtime[j] = maxtime[j]/(double)(STREAM_ARRAY_SIZE);
 
-                fprintf(fp, "%s,%.1f,%.6f,%.6f,%.6f\n", label[j], 
-                    1.0E-06 * bytes[j]/mintime[j], avgtime[j], mintime[j], 
+                fprintf(fp, "%s,%.1f,%.16f,%.16f,%.16f\n", label[j], 
+                    1.0E-06 * bytes[j]/min_, avgtime[j], mintime[j], 
                     maxtime[j]);
             }
 

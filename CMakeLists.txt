@@ -51,6 +51,7 @@ if (MPI_FOUND)
     add_definitions(-DOMPI_SKIP_MPICXX)
     add_executable(stream_mpi src/stream_mpi.c)
     target_link_libraries(stream_mpi PRIVATE MPI::MPI_C)
+    target_link_libraries(stream_mpi PRIVATE OpenMP::OpenMP_C)
     #target_link_libraries(stream_mpi PRIVATE ${MPI_C_LIBRARIES})
     #target_include_directories(stream_mpi PRIVATE ${MPI_C_INCLUDE_PATH}) 
 
