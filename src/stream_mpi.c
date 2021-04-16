@@ -569,7 +569,6 @@ main()
         {
             fprintf(fp, "Function,BestRate,Avgtime,Mintime,Maxtime\n");
             for (j=0; j<4; j++) {
-                avgtime[j] = avgtime[j]/(double)(NTIMES-1);
 				avgtime[j] = avgtime[j]/(double)(STREAM_ARRAY_SIZE);
 				min_ = mintime[j];
 				mintime[j] = mintime[j]/(double)(STREAM_ARRAY_SIZE);
