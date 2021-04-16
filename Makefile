@@ -10,7 +10,7 @@ stream_single: src/stream.c
 
 # openmp 
 stream_multi: src/stream.c
-	$(CC) $(CFLAGS) -qopenmp -DSTREAM_ARRAY_SIZE=100000000 -DNTIMES=20 src/stream.c -o bin/stream_multi
+	$(CC) $(CFLAGS) -fopenmp -DSTREAM_ARRAY_SIZE=100000000 -DNTIMES=20 src/stream.c -o bin/stream_multi
 
 # mpi 
 stream_mpi: src/stream_mpi.c
