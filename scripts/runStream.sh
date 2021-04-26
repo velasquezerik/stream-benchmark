@@ -2,145 +2,108 @@
 
 ### Configuration ###################################################
 
-# Compilers and tools
-#
-
-	##Compilers for local (example)
-	#source /opt/intel/oneapi/setvars.sh
-
-	#Compilers Variables
-
-        # Intel Compilers
-        CXX_COMPILER=icpc
-        C_COMPILER=icc
-		MPI_COMPILER=mpicc
-
-        # GNU Compilers
-        #CXX_COMPILER=g++
-        #C_COMPILER=gcc
+# tools
 
 	# General Variables
 	#
-		cd ..
+		cd ../..
 		WORK_DIR=$PWD
-		#SRC_DIR=${WORK_DIR}/src
-		#INC_DIR=${WORK_DIR}/include
-		BIN_DIR=${WORK_DIR}/bin
-		LOG_DIR=${WORK_DIR}/logs
-
-		# For MPI execution
-		NP=4
+        WORK_STREAM=${PWD}/Stream
+		LOG_DIR=${WORK_STREAM}/logs
     
-    # Stream definition variables
-        STREAM_ARRAY_SIZE=100000000
-        NTIMES=20
+    # GCP variables
+        COMPUTE_INSTANCE=tmi-test
+    
+    # Remote variables
+        COMPUTE_NODE=192.168.1.144
+        COMPUTE_USER=root
 
 
-#####################################################################
+# Define local execution
 
-#####################################################################
-
-#Compiling Code
-
-	mkdir -p build && cd build
-	#cmake .. && make
-    #cmake -D CMAKE_C_COMPILER=icc -D CMAKE_CXX_COMPILER=icpc -D STREAM_ARRAY_SIZE=${STREAM_ARRAY_SIZE} -D NTIMES=${NTIMES} .. && make
-    cmake -D CMAKE_C_COMPILER=icc -D CMAKE_CXX_COMPILER=icpc .. && make
-	cd ..
-
-#####################################################################
-
-
-#####################################################################
-
-#Run Code
-
-    # Single Core
+local_execution(){ 
     echo ""
 	echo "---------------------------------------------------------------------"
-	echo "Executing Stream benchmark Application, Single Core..."
+	echo "Executing Stream benchmark: LOCAL"
 	echo "---------------------------------------------------------------------"
-	${BIN_DIR}/stream_single &> LogSingleFile.log
+    
+    source runLocal.sh
 
-
-    # Multi Core
-    echo ""
-	echo "---------------------------------------------------------------------"
-	echo "Executing Stream benchmark Application, Multi Core..."
-	echo "---------------------------------------------------------------------"
-	${BIN_DIR}/stream_multi &> LogMultiFile.log
-
-	# MPI
-    echo ""
-	echo "---------------------------------------------------------------------"
-	echo "Executing Stream benchmark Application, MPI..."
-	echo "---------------------------------------------------------------------"
-	mpirun -np ${NP} ${BIN_DIR}/stream_mpi &> LogMPIFile.log
-
-#####################################################################
-
-#####################################################################
-# Edit logs name and move
-
-	# Create timestamp
-
-		timestamp=$(date +%Y%d%m-%H%M%S)
-
-	# Edit and move
-		echo ""
-	    echo "---------------------------------------------------------------------"
-	    echo "Renaming Single After execution log file..."
-	    echo "---------------------------------------------------------------------"
-	    LOGFILE_NAME_SINGLE=STREAM_SINGLE_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/LogSingleFile.log ${LOG_DIR}/${LOGFILE_NAME_SINGLE}
-		# Move Log Data
-		LOGFILE_NAME_SINGLE_DATA=STREAM_SINGLE_DATA_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/STREAM_BENCHMARK_SINGLE_log.log ${LOG_DIR}/${LOGFILE_NAME_SINGLE_DATA}
-
-
-	# Edit and move
-		echo ""
-	    echo "---------------------------------------------------------------------"
-	    echo "Renaming Multi After execution log file..."
-	    echo "---------------------------------------------------------------------"
-	    LOGFILE_NAME_MULTI=STREAM_MULTI_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/LogMultiFile.log ${LOG_DIR}/${LOGFILE_NAME_MULTI}
-		# Move log data
-		LOGFILE_NAME_MULTI_DATA=STREAM_MULTI_DATA_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/STREAM_BENCHMARK_MULTI_log.log ${LOG_DIR}/${LOGFILE_NAME_MULTI_DATA}
-	
-	# Edit and move
-		echo ""
-	    echo "---------------------------------------------------------------------"
-	    echo "Renaming MPI After execution log file..."
-	    echo "---------------------------------------------------------------------"
-	    LOGFILE_NAME_MPI=STREAM_MPI_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/LogMPIFile.log ${LOG_DIR}/${LOGFILE_NAME_MPI}
-		# Move log data
-		LOGFILE_NAME_MPI_DATA=STREAM_MPI_DATA_LOG_${HOSTNAME}_${timestamp}.log
-	    mv ${WORK_DIR}/STREAM_BENCHMARK_MPI_log.log ${LOG_DIR}/${LOGFILE_NAME_MPI_DATA}
-
-#####################################################################
-
-#####################################################################
-# Print logs file to stdout
-    echo ""
-    echo "---------------------------------------------------------------------"
-    echo "After execution Logs file content (Single CORE): "
-    echo "---------------------------------------------------------------------"
-    cat ${LOG_DIR}/${LOGFILE_NAME_SINGLE}
-    echo ""
-    echo "---------------------------------------------------------------------"
-    echo "After execution Logs file content (Multi CORE): "
-    echo "---------------------------------------------------------------------"
-    cat ${LOG_DIR}/${LOGFILE_NAME_MULTI}
-	echo ""
-    echo "---------------------------------------------------------------------"
-    echo "After execution Logs file content (MPI): "
-    echo "---------------------------------------------------------------------"
-    cat ${LOG_DIR}/${LOGFILE_NAME_MPI}
     echo "---------------------------------------------------------------------"
     echo "End of Stream Benchmarck"
     echo "---------------------------------------------------------------------"
+}
+
+# Define gcp execution
+
+gcp_execution(){ 
+    echo ""
+	echo "---------------------------------------------------------------------"
+	echo "Executing Stream benchmark: GCP"
+	echo "---------------------------------------------------------------------"
+
+    # Copy data
+    gcloud compute scp ${WORK_STREAM}/ ${COMPUTE_INSTANCE}:~/
+
+    #execute command
+    gcloud compute ssh ${COMPUTE_INSTANCE} --command="cd Stream &&  ./scripts/runGCP.sh"
+
+    # Get data
+    gcloud compute scp ${COMPUTE_INSTANCE}:~/Stream/logs/ ${LOG_DIR}
+
+    echo "---------------------------------------------------------------------"
+    echo "End of Stream Benchmarck"
+    echo "---------------------------------------------------------------------"
+}
+
+# Define remote execution
+
+remote_execution(){ 
+    echo ""
+	echo "---------------------------------------------------------------------"
+	echo "Executing Stream benchmark: REMOTE"
+	echo "---------------------------------------------------------------------"
+    
+    # Copy data
+    scp ${WORK_STREAM}/ ${COMPUTE_USER}@${COMPUTE_NODE}:~/
+
+    #execute command
+    ssh ${COMPUTE_USER}@${COMPUTE_NODE} "cd Stream && ./scripts/runGCP.sh"
+
+    # Get data
+    scp ${COMPUTE_USER}@${COMPUTE_NODE}:~/Stream/logs/ ${LOG_DIR}
+
+    echo "---------------------------------------------------------------------"
+    echo "End of Stream Benchmarck"
+    echo "---------------------------------------------------------------------"
+}
+
+
+#####################################################################
+
+### Execution #######################################################
+
+# Define options for execution
+
+    case "$1" in
+        "local")
+            local_execution
+        ;;
+
+        "gcp")
+            gcp_execution
+        ;;
+
+        "remote")
+            remote_execution
+        ;;
+
+        *)
+        echo "You have failed to specify what to do correctly."
+        echo "Default option local"
+        local_execution
+        exit 1
+        ;;
+    esac
 
 #####################################################################
