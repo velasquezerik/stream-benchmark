@@ -28,10 +28,10 @@
 
 	# General Variables
 	#
-		cd ..
-		WORK_DIR=$PWD
+		WORK_DIR=${PWD}/Stream
 		BIN_DIR=${WORK_DIR}/bin
 		LOG_DIR=${WORK_DIR}/logs
+		cd ${WORK_DIR}
 
 		# For MPI execution
 		NP=4
@@ -64,8 +64,8 @@
 #Compiling Code
 
 	mkdir -p build && cd build
-	cmake .. && make
-	cd ..
+	cmake -D CMAKE_C_COMPILER=icc -D CMAKE_CXX_COMPILER=icpc .. && make
+	cd ${WORK_DIR}
 
 #####################################################################
 
@@ -79,7 +79,7 @@
 	echo "---------------------------------------------------------------------"
 	echo "Executing Stream benchmark Application, Single Core..."
 	echo "---------------------------------------------------------------------"
-	${BIN_DIR}/stream_single &> ${LOG_SINGLE}
+	${BIN_DIR}/stream_single &> ${LOG_DIR}/${LOG_SINGLE}
 
 
     # Multi Core
@@ -87,14 +87,14 @@
 	echo "---------------------------------------------------------------------"
 	echo "Executing Stream benchmark Application, Multi Core..."
 	echo "---------------------------------------------------------------------"
-	${BIN_DIR}/stream_multi &> ${LOG_MULTI}
+	${BIN_DIR}/stream_multi &> ${LOG_DIR}/${LOG_MULTI}
 
 	# MPI
     echo ""
 	echo "---------------------------------------------------------------------"
 	echo "Executing Stream benchmark Application, MPI..."
 	echo "---------------------------------------------------------------------"
-	mpirun -np ${NP} ${BIN_DIR}/stream_mpi &> ${LOG_MPI}
+	mpirun -np ${NP} ${BIN_DIR}/stream_mpi &> ${LOG_DIR}/${LOG_MPI}
 
 #####################################################################
 
@@ -106,7 +106,7 @@
 	    echo "---------------------------------------------------------------------"
 	    echo "Renaming Single After execution log file..."
 	    echo "---------------------------------------------------------------------"
-	    mv ${WORK_DIR}/${LOG_SINGLE} ${LOG_DIR}/${LOGFILE_NAME_SINGLE}
+	    mv ${LOG_DIR}/${LOG_SINGLE} ${LOG_DIR}/${LOGFILE_NAME_SINGLE}
 		# Move Log Data
 	    mv ${WORK_DIR}/STREAM_BENCHMARK_SINGLE_log.log ${LOG_DIR}/${LOGFILE_NAME_SINGLE_DATA}
 
@@ -116,7 +116,7 @@
 	    echo "---------------------------------------------------------------------"
 	    echo "Renaming Multi After execution log file..."
 	    echo "---------------------------------------------------------------------"
-	    mv ${WORK_DIR}/${LOG_MULTI} ${LOG_DIR}/${LOGFILE_NAME_MULTI}
+	    mv ${LOG_DIR}/${LOG_MULTI} ${LOG_DIR}/${LOGFILE_NAME_MULTI}
 		# Move log data
 	    mv ${WORK_DIR}/STREAM_BENCHMARK_MULTI_log.log ${LOG_DIR}/${LOGFILE_NAME_MULTI_DATA}
 	
@@ -125,7 +125,7 @@
 	    echo "---------------------------------------------------------------------"
 	    echo "Renaming MPI After execution log file..."
 	    echo "---------------------------------------------------------------------"
-	    mv ${WORK_DIR}/${LOG_MPI} ${LOG_DIR}/${LOGFILE_NAME_MPI}
+	    mv ${LOG_DIR}/${LOG_MPI} ${LOG_DIR}/${LOGFILE_NAME_MPI}
 		# Move log data
 	    mv ${WORK_DIR}/STREAM_BENCHMARK_MPI_log.log ${LOG_DIR}/${LOGFILE_NAME_MPI_DATA}
 

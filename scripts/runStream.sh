@@ -8,8 +8,9 @@
 	#
 		cd ../..
 		WORK_DIR=$PWD
-        WORK_STREAM=${PWD}/Stream
-		LOG_DIR=${WORK_STREAM}/logs
+        STREAM_DIR=${PWD}/Stream
+		LOG_DIR=${STREAM_DIR}/logs
+        SCRIPT_DIR=${STREAM_DIR}/scripts
     
     # GCP variables
         COMPUTE_INSTANCE=tmi-test
@@ -27,7 +28,7 @@ local_execution(){
 	echo "Executing Stream benchmark: LOCAL"
 	echo "---------------------------------------------------------------------"
     
-    source runLocal.sh
+    sh ${SCRIPT_DIR}/runLocal.sh
 
     echo "---------------------------------------------------------------------"
     echo "End of Stream Benchmarck"
@@ -43,10 +44,10 @@ gcp_execution(){
 	echo "---------------------------------------------------------------------"
 
     # Copy data
-    gcloud compute scp ${WORK_STREAM}/ ${COMPUTE_INSTANCE}:~/
+    gcloud compute scp ${STREAM_DIR}/ ${COMPUTE_INSTANCE}:~/
 
     #execute command
-    gcloud compute ssh ${COMPUTE_INSTANCE} --command="cd Stream &&  ./scripts/runGCP.sh"
+    gcloud compute ssh ${COMPUTE_INSTANCE} --command="sh Stream/scripts/runGCP.sh"
 
     # Get data
     gcloud compute scp ${COMPUTE_INSTANCE}:~/Stream/logs/ ${LOG_DIR}
@@ -65,10 +66,10 @@ remote_execution(){
 	echo "---------------------------------------------------------------------"
     
     # Copy data
-    scp ${WORK_STREAM}/ ${COMPUTE_USER}@${COMPUTE_NODE}:~/
+    scp ${STREAM_DIR}/ ${COMPUTE_USER}@${COMPUTE_NODE}:~/
 
     #execute command
-    ssh ${COMPUTE_USER}@${COMPUTE_NODE} "cd Stream && ./scripts/runGCP.sh"
+    ssh ${COMPUTE_USER}@${COMPUTE_NODE} "sh Stream/scripts/runRemote.sh"
 
     # Get data
     scp ${COMPUTE_USER}@${COMPUTE_NODE}:~/Stream/logs/ ${LOG_DIR}
